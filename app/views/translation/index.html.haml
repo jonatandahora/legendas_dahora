@@ -1,0 +1,7 @@
+%h1 Translation#translate
+= form_tag({action: 'show', controller: 'translation'}, {multipart: true, class: 'ui form'}) do
+  %div
+  %label.ui.icon.button{:for => "subtitle"}
+    %i.file.icon
+  = file_field_tag('subtitle',class: 'field')
+  = submit_tag('Traduzir', class: 'ui button')
