@@ -1,7 +1,37 @@
-%h1 Translation#translate
-= form_tag({action: 'show', controller: 'translation'}, {multipart: true, class: 'ui form'}) do
-  %div
-  %label.ui.icon.button{:for => "subtitle"}
-    %i.file.icon
-  = file_field_tag('subtitle',class: 'field')
-  = submit_tag('Traduzir', class: 'ui button')
+.ui.page.grid
+  .row
+  %h1.ui.center.aligned.icon.header
+    %i.translate.icon
+    .content
+      Tradutor da Hora
+  .row
+.ui.two.column.stackable.center.aligned.page.grid
+  .column
+    .ui.segment.left.aligned
+      = form_tag({action: 'show', controller: 'translation'}, {multipart: true, class: 'ui form'}) do
+        .field
+          %label Legenda
+          %div
+          %label.ui.icon.button{:for => 'subtitle'}
+            %i.upload.icon
+            Selecionar Arquivo de Legenda
+          = file_field_tag('subtitle',class: 'field', style: 'display:none')
+        .field
+          %label Traduzir de
+          .ui.dropdown.selection
+            %input{:name => 'from', :type => 'hidden'}
+              .default.text Selecionar Idioma
+              %i.dropdown.icon
+              .menu
+                .item{'data-value' => 'pt'} Português
+                .item{'data-value' => 'en'} Inglês
+        .field
+          %label Para
+          .ui.dropdown.selection
+            %input{:name => 'to', :type => 'hidden'}
+              .default.text Selecionar Idioma
+              %i.dropdown.icon
+              .menu
+                .item{'data-value' => 'pt'} Português
+                .item{'data-value' => 'en'} Inglês
+        = submit_tag('Traduzir', class: 'ui button')

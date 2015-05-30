@@ -1,4 +1,17 @@
-%h1 Legenda Traduzida
-= @subtitle.each do |line|
-  %p= line.time_str  + ' ' + line.text.join(' ')
-
+.ui.grid.page
+  .ui.sixteen.wide.column
+    .row
+    %h1.ui.center.aligned.header Legenda Traduzida
+    .row
+    %table.ui.black.table
+      %thead
+        %tr
+          %th Sequência
+          %th Tempo
+          %th Linha
+      %tbody
+        - @subtitle.each do |line|
+          %tr
+            %td= line.sequence
+            %td= line.time_str
+            %td= line.text.join(' ')
