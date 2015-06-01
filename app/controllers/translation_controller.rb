@@ -17,7 +17,7 @@ class TranslationController < ApplicationController
       Thread.new(uploaded_file.lines, translated_subtitle) do |lines, file|
         while line = mutex.synchronize { lines.pop }
           line.text.map! do |textline|
-            translate_microsoft(textline, from, to)
+            translate_yandex(textline, from, to)
           end
           mutex.synchronize { file << line }
         end
@@ -31,7 +31,7 @@ class TranslationController < ApplicationController
 
   private
   def translate_microsoft(text, from, to)
-    app_id = 'TGVCpQYXyVGviny7hqzeZaq06cEqAzWm5_-tPRBCPdexFQd9zn7IEUqdVEyZDeV79'
+    app_id = 'TbG-fYM3BuIfHrxKHRuOYI2ktCTs9hJlO-Soq6zCO-NA*'
     uri = URI.parse(URI.encode("https://api.microsofttranslator.com/v2/ajax.svc/TranslateArray2?appId=\"#{app_id}\"&texts=[#{text.to_json}]&from=\"#{from}\"&to=\"#{to}\"").strip)
     response = Net::HTTP.get_response(uri)
     response_body = response.body

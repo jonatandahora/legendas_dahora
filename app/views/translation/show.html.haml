@@ -6,12 +6,16 @@
     %table.ui.black.table
       %thead
         %tr
-          %th Sequência
-          %th Tempo
-          %th Linha
+          %th.seq Sequência
+          %th.time Tempo
+          %th.text Linha
       %tbody
         - @subtitle.each do |line|
           %tr
-            %td= line.sequence
-            %td= line.time_str
-            %td= line.text.join(' ')
+            %td.seq= line.sequence
+            %td.time= line.time_str
+            %td.text
+              .ui.fluid.input
+                - line.text.each do |line_array|
+                  %input{value: line_array }
+

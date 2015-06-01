@@ -1,3 +1,48 @@
 // Place all the styles related to the translation controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+table {
+  width: 100%;
+}
+
+thead, tbody, tr, td, th { display: block; }
+
+tr:after {
+  content: ' ';
+  display: block;
+  visibility: hidden;
+  clear: both;
+}
+
+thead th {
+  height: 30px;
+
+  /*text-align: left;*/
+}
+
+tbody {
+  height: 500px;
+  overflow-y: auto;
+}
+
+thead {
+  /* fallback */
+}
+
+
+thead th, tbody td {
+  float: left;
+}
+
+.seq{
+  width: 10%;
+}
+
+.time{
+  width: 25%;
+}
+
+.text{
+  width: 65%;
+}
