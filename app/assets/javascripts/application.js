@@ -20,4 +20,31 @@ $( document ).ready(function() {
 $('.ui.dropdown').dropdown({
     transition: 'drop'
 })
+
+$( "input[name*='line']" ).keypress(function(e) {
+
+    var input_name = this.name;
+
+    if(e.which == 13) {
+
+        $.ajax({
+
+            method: "POST",
+            url: "/translation/edit_line",
+            data: { sequence: this.name.substr(5,1), text_index: this.name.substr(8,1), text: $(this).val() }
+        })
+            .success(function( msg ) {
+
+                alert( "Linha Revisada!" );
+                $("input[name='"+input_name+"']").siblings().addClass('green');
+                $("input[name='"+input_name+"']").siblings().children().removeClass('question');
+                $("input[name='"+input_name+"']").siblings().children().addClass('check');
+            })
+            .error(function(msg){
+
+                alert("Não foi possível salvar a linha: " + msg);
+        });
+    }
+});
+
 });

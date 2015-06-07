@@ -18,9 +18,12 @@
               .ui.pointing.below.label
                 - line_original.text.each do |line_array|
                   %label= line_array
-              .ui.fluid.input
-                - line.text.each do |line_array|
-                  %input{value: line_array }
+              - line.text.each do |line_array|
+                .ui.fluid.corner.labeled.input
+                  %input{name: "line[#{line.sequence}][#{line.text.index(line_array)}]" ,value: line_array }
+                  .ui.corner.label
+                    %i.question.icon
     .row
       .ui.button
         = link_to 'Download', translation_download_url
+    .row

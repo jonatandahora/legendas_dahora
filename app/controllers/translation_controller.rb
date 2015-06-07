@@ -34,7 +34,23 @@ class TranslationController < ApplicationController
   end
 
   def download
+
     send_data $translated.to_s, :type=> 'application/x-subrip', :x_sendfile=>true, :filename => $filename
+  end
+
+  def edit_line
+
+    sequence = params[:sequence].to_i
+    text_index = params[:text_index].to_i
+    text = params[:text]
+    line = $translated.lines[sequence - 1]
+    line.text[text_index] = text
+    $translated.lines[sequence - 1] = line
+
+    respond_to do |format|
+      format.js { render nothing: true }
+    end
+
   end
 
   private
