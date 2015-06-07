@@ -7,14 +7,16 @@ class TranslationController < ApplicationController
 
   def show
     mutex = Mutex.new
-    translated_subtitle =[]
+    translated_subtitle = SRT::File.new
     from = params['from']
     to = params['to']
     subtitle = params['subtitle'].tempfile
     uploaded_file = SRT::File.parse(File.new(subtitle))
+    original_file = SRT::File.parse(File.new(subtitle))
+    $filename = params['subtitle'].original_filename
 
     THREAD_COUNT.times.map {
-      Thread.new(uploaded_file.lines, translated_subtitle) do |lines, file|
+      Thread.new(uploaded_file.lines, translated_subtitle.lines) do |lines, file|
         while line = mutex.synchronize { lines.pop }
           line.text.map! do |textline|
             translate_yandex(textline, from, to)
@@ -24,9 +26,15 @@ class TranslationController < ApplicationController
       end
     }.each(&:join)
 
-    translated_subtitle.sort_by!(&:sequence)
+    translated_subtitle.lines.sort_by!(&:sequence)
 
-    @subtitle = translated_subtitle
+    $translated = translated_subtitle
+    @original = original_file
+
+  end
+
+  def download
+    send_data $translated.to_s, :type=> 'application/x-subrip', :x_sendfile=>true, :filename => $filename
   end
 
   private

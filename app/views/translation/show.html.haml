@@ -10,12 +10,17 @@
           %th.time Tempo
           %th.text Linha
       %tbody
-        - @subtitle.each do |line|
+        - $translated.lines.zip(@original.lines).each do |line, line_original|
           %tr
             %td.seq= line.sequence
             %td.time= line.time_str
             %td.text
+              .ui.pointing.below.label
+                - line_original.text.each do |line_array|
+                  %label= line_array
               .ui.fluid.input
                 - line.text.each do |line_array|
                   %input{value: line_array }
-
+    .row
+      .ui.button
+        = link_to 'Download', translation_download_url
