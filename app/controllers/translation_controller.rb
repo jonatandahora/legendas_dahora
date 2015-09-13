@@ -1,19 +1,19 @@
 require 'json'
-
+# Main Translation Controller
 class TranslationController < ApplicationController
-  THREAD_COUNT=65
+  THREAD_COUNT = 65
   def index
   end
 
-  def show
+  def translate
     mutex = Mutex.new
     translated_subtitle = SRT::File.new
     from = params['from']
     to = params['to']
-    subtitle = params['subtitle'].tempfile
-    uploaded_file = SRT::File.parse(File.new(subtitle))
-    original_file = SRT::File.parse(File.new(subtitle))
-    $filename = params['subtitle'].original_filename
+    uploaded_file = SRT::File.parse(File.new(params['subtitle'].tempfile))
+    original_file = SRT::File.parse(File.new(params['subtitle'].tempfile))
+    pry
+    filename = params['subtitle'].original_filename
 
     THREAD_COUNT.times.map {
       Thread.new(uploaded_file.lines, translated_subtitle.lines) do |lines, file|
@@ -27,30 +27,53 @@ class TranslationController < ApplicationController
     }.each(&:join)
 
     translated_subtitle.lines.sort_by!(&:sequence)
+    Subtitle.create(
+      filename: filename,
+      original: original_file.to_s,
+      translated: translated_subtitle.to_s
+    )
+    redirect_to '/translation/show'
 
-    $translated = translated_subtitle
-    @original = original_file
+  end
 
+  def show
+    subtitle = Subtitle.last
+    @original = SRT::File.parse(subtitle.original)
+    @translated = SRT::File.parse(subtitle.translated)
   end
 
   def download
-
-    send_data $translated.to_s, :type=> 'application/x-subrip', :x_sendfile=>true, :filename => $filename
+    subtitle = Subtitle.last
+    send_data subtitle.translated , :type=> 'application/x-subrip',
+      :x_sendfile=>true, :filename => subtitle.filename
+    Subtitle.delete(subtitle)
   end
 
   def edit_line
-
+    subtitle = Subtitle.last
+    translated = SRT::File.parse(subtitle.translated)
     sequence = params[:sequence].to_i
     text_index = params[:text_index].to_i
     text = params[:text]
-    line = $translated.lines[sequence - 1]
+    line = translated.lines[sequence - 1]
     line.text[text_index] = text
-    $translated.lines[sequence - 1] = line
-
+    translated.lines[sequence - 1] = line
+    subtitle.translated = translated.to_s
+    subtitle.save
     respond_to do |format|
       format.js { render nothing: true }
     end
 
+  end
+
+  def sync_all
+    subtitle = Subtitle.last
+    translated = SRT::File.parse(subtitle.translated)
+    time = params['time']
+    translated.timeshift( :all => "#{time}" )
+    subtitle.translated = translated.to_s
+    subtitle.save
+    redirect_to '/translation/show'
   end
 
   private

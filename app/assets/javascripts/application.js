@@ -33,18 +33,43 @@ $( "input[name*='line']" ).keypress(function(e) {
             url: "/translation/edit_line",
             data: { sequence: this.name.substr(5,1), text_index: this.name.substr(8,1), text: $(this).val() }
         })
-            .success(function( msg ) {
+        .success(function( msg ) {
 
-                alert( "Linha Revisada!" );
-                $("input[name='"+input_name+"']").siblings().addClass('green');
-                $("input[name='"+input_name+"']").siblings().children().removeClass('question');
-                $("input[name='"+input_name+"']").siblings().children().addClass('check');
-            })
-            .error(function(msg){
+            alert( "Linha Revisada!" );
+            $("input[name='"+input_name+"']").siblings().addClass('green');
+            $("input[name='"+input_name+"']").siblings().children().removeClass('question');
+            $("input[name='"+input_name+"']").siblings().children().addClass('check');
+        })
+        .error(function(msg){
 
-                alert("Não foi possível salvar a linha: " + msg);
+            alert("Não foi possível salvar a linha: " + msg);
         });
     }
+});
+
+
+$("#plus_one").click(function (e) {
+    $.ajax({
+
+        method: "POST",
+        url: "/translation/sync_all",
+        data: { time: "+1.0s" }
+    })
+    .success(function( msg ) {
+        window.location.reload(true);
+    })
+});
+
+$("#minus_one").click(function (e) {
+    $.ajax({
+
+        method: "POST",
+        url: "/translation/sync_all",
+        data: { time: "-1.0s" }
+    })
+    .success(function( msg ) {
+        window.location.reload(true);
+    })
 });
 
 });

@@ -8,7 +8,7 @@
 .ui.two.column.stackable.center.aligned.page.grid
   .column
     .ui.segment.left.aligned
-      = form_tag({action: 'show', controller: 'translation'}, {multipart: true, class: 'ui form'}) do
+      = form_tag({action: 'translate', controller: 'translation'}, {multipart: true, class: 'ui form'}) do
         .field
           %label Legenda
           %div

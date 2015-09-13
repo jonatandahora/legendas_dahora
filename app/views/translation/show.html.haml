@@ -10,7 +10,7 @@
           %th.time Tempo
           %th.text Linha
       %tbody
-        - $translated.lines.zip(@original.lines).each do |line, line_original|
+        - @translated.lines.zip(@original.lines).each do |line, line_original|
           %tr
             %td.seq= line.sequence
             %td.time= line.time_str
@@ -20,10 +20,14 @@
                   %label= line_array
               - line.text.each do |line_array|
                 .ui.fluid.corner.labeled.input
-                  %input{name: "line[#{line.sequence}][#{line.text.index(line_array)}]" ,value: line_array }
+                  %input{name: "line[#{line.sequence}][#{line.text.index(line_array)}]", value: line_array }
                   .ui.corner.label
                     %i.question.icon
     .row
       .ui.button
         = link_to 'Download', translation_download_url
+      .ui.button
+        %a{href: '#', title: '+1s', id: 'plus_one'} +1s
+      .ui.button
+        %a{href: '#', title: '-1s', id: 'minus_one'} -1s
     .row
