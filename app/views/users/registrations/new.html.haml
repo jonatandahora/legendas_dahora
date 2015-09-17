@@ -1,21 +1,26 @@
-%h2 Sign up
-= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
+.ui.grid.page
+  .ui.sixteen.wide.column
+    .row
+    %h1.ui.center.aligned.header Sign up
+    .row
+.ui.two.column.stackable.center.aligned.page.grid
   = devise_error_messages!
-  .field
-    = f.label :email
-    %br/
-    = f.email_field :email, autofocus: true
-  .field
-    = f.label :password
-    - if @minimum_password_length
-      %em
-        (#{@minimum_password_length} characters minimum)
-    %br/
-    = f.password_field :password, autocomplete: "off"
-  .field
-    = f.label :password_confirmation
-    %br/
-    = f.password_field :password_confirmation, autocomplete: "off"
-  .actions
-    = f.submit "Sign up"
-= render "users/shared/links"
+  .column
+    .ui.segment.left.aligned
+      = form_for(resource, as: resource_name, url: registration_path(resource_name), html: {class: 'ui form'}) do |f|
+        .field
+          .ui.fluid.left.icon.input
+            = f.email_field :email, placeholder: 'Email', autofocus: true
+            %i.users.icon
+        .field
+          .ui.fluid.left.icon.input
+            = f.password_field :password, placeholder: 'Password(8 characters minimun)', autocomplete: "off"
+            %i.privacy.icon
+        .field
+          .ui.fluid.left.icon.input
+            = f.password_field :password_confirmation, placeholder: 'Password Confirmation', autocomplete: "off"
+            %i.privacy.icon
+        .actions.field
+          = f.submit "Sign up", class: 'ui fluid button'
+        .actions.field
+          = render "users/shared/links"

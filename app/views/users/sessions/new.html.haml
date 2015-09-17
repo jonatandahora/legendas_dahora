@@ -1,17 +1,26 @@
-%h2 Log in
-= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
-  .field
-    = f.label :email
-    %br/
-    = f.email_field :email, autofocus: true
-  .field
-    = f.label :password
-    %br/
-    = f.password_field :password, autocomplete: "off"
-  - if devise_mapping.rememberable?
-    .field
-      = f.check_box :remember_me
-      = f.label :remember_me
-  .actions
-    = f.submit "Log in"
-= render "users/shared/links"
+.ui.grid.page
+  .ui.sixteen.wide.column
+    .row
+    %h1.ui.center.aligned.header Log in
+    .row
+.ui.two.column.stackable.center.aligned.page.grid
+  .column
+    .ui.segment.left.aligned
+      = form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: 'ui form'}) do |f|
+        .field
+          .ui.fluid.left.icon.input
+            = f.email_field :email, placeholder: 'Email', autofocus: true
+            %i.users.icon
+        .field
+          .ui.fluid.left.icon.input
+            = f.password_field :password, placeholder: 'Password', autocomplete: "off"
+            %i.privacy.icon
+        - if devise_mapping.rememberable?
+          .field
+            .ui.slider.checkbox
+              = f.check_box :remember_me
+              = f.label :remember_me
+        .actions.field
+          = f.submit "Log in", class: 'ui fluid button'
+        .actions.field
+          = render "users/shared/links"
