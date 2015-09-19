@@ -20,6 +20,9 @@ $( document ).ready(function() {
 $('.ui.dropdown').dropdown({
     transition: 'drop'
 })
+$('.message .close').on('click', function() {
+  return $(this).closest('.message').fadeOut();
+});
 
 $( "input[name*='line']" ).keypress(function(e) {
 

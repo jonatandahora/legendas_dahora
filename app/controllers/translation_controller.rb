@@ -1,6 +1,9 @@
 require 'json'
 # Main Translation Controller
 class TranslationController < ApplicationController
+  before_action :authenticate_user!
+  before_action :get_subtitle, except: [:index, :translate]
+
   THREAD_COUNT = 65
   def index
   end
@@ -12,7 +15,6 @@ class TranslationController < ApplicationController
     to = params['to']
     uploaded_file = SRT::File.parse(File.new(params['subtitle'].tempfile))
     original_file = SRT::File.parse(File.new(params['subtitle'].tempfile))
-    pry
     filename = params['subtitle'].original_filename
 
     THREAD_COUNT.times.map {
@@ -30,36 +32,33 @@ class TranslationController < ApplicationController
     Subtitle.create(
       filename: filename,
       original: original_file.to_s,
-      translated: translated_subtitle.to_s
+      translated: translated_subtitle.to_s,
+      user_id: current_user.id
     )
     redirect_to '/translation/show'
 
   end
 
   def show
-    subtitle = Subtitle.last
-    @original = SRT::File.parse(subtitle.original)
-    @translated = SRT::File.parse(subtitle.translated)
+    @original = SRT::File.parse(@subtitle.original)
+    @translated = SRT::File.parse(@subtitle.translated)
   end
 
   def download
-    subtitle = Subtitle.last
-    send_data subtitle.translated , :type=> 'application/x-subrip',
-      :x_sendfile=>true, :filename => subtitle.filename
-    Subtitle.delete(subtitle)
+    send_data @subtitle.translated , :type=> 'application/x-subrip',
+      :x_sendfile=>true, :filename => @subtitle.filename
   end
 
   def edit_line
-    subtitle = Subtitle.last
-    translated = SRT::File.parse(subtitle.translated)
+    translated = SRT::File.parse(@subtitle.translated)
     sequence = params[:sequence].to_i
     text_index = params[:text_index].to_i
     text = params[:text]
     line = translated.lines[sequence - 1]
     line.text[text_index] = text
     translated.lines[sequence - 1] = line
-    subtitle.translated = translated.to_s
-    subtitle.save
+    @subtitle.translated = translated.to_s
+    @subtitle.save
     respond_to do |format|
       format.js { render nothing: true }
     end
@@ -67,16 +66,20 @@ class TranslationController < ApplicationController
   end
 
   def sync_all
-    subtitle = Subtitle.last
-    translated = SRT::File.parse(subtitle.translated)
+    translated = SRT::File.parse(@subtitle.translated)
     time = params['time']
     translated.timeshift( :all => "#{time}" )
-    subtitle.translated = translated.to_s
-    subtitle.save
+    @subtitle.translated = translated.to_s
+    @subtitle.save
     redirect_to '/translation/show'
   end
 
   private
+
+  def get_subtitle
+    @subtitle = Subtitle.where(user_id: current_user.id).last
+  end
+
   def translate_microsoft(text, from, to)
     app_id = 'TbG-fYM3BuIfHrxKHRuOYI2ktCTs9hJlO-Soq6zCO-NA*'
     uri = URI.parse(URI.encode("https://api.microsofttranslator.com/v2/ajax.svc/TranslateArray2?appId=\"#{app_id}\"&texts=[#{text.to_json}]&from=\"#{from}\"&to=\"#{to}\"").strip)

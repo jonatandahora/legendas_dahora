@@ -1,0 +1,18 @@
+.ui.page.grid
+  .two.wide.column
+  .twelve.wide.column
+    .row
+      .ui.two.column.stackable.center.aligned.page.grid
+        - flash.each do |key, value|
+          - if key == 'info'
+            .ui.teal.icon.message.notice
+              %i.close.icon
+              %i.info.icon
+              .content
+                = raw(value)
+          - if key == 'alert'
+            .ui.negative.icon.message.alert
+              %i.close.icon
+              %i.warning.icon
+              .content
+                = raw(value)
